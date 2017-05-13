@@ -22,7 +22,7 @@ client.createRepl();
 
 
 //
-app.post('/drone/flightdemp', function(req, res) {
+app.post('/drone/flightdemo', function(req, res) {
     console.log('Testing Flight Demo');
     client.takeoff();
 
@@ -37,10 +37,54 @@ app.post('/drone/flightdemp', function(req, res) {
 });
 
 
-app.post('/drone/blink', function(req, res) {
+app.post('/drone/blinkdemo', function(req, res) {
   client.animateLeds('blinkRed', 5, 2)
   console.log('in here');
 });
+
+app.post('/drone/transmit', function(req, res) {
+    var string  = 'Hello World';
+    var raw = utf8ToBin(string);
+
+    for (var i = 0, len = raw.length; i < len; i++) {
+        var bit = raw[i];
+        var led_color = bitColor(bit)
+        console.log('Blinking ' + led_color + ' for ' + bit)
+        client.animateLeds(led_color, 1, 1)
+        wait(1)
+    }
+});
+
+function bitColor(bit) {
+    if (bit === '1') {
+        return 'blinkGreen'
+    } else if (bit === '0') {
+        return 'blinkRed'
+    } else {
+        return 'blank'
+    }
+}
+
+// Binary Controller
+var utf8ToBin = function( s ){
+    s = unescape( encodeURIComponent( s ) );
+    var chr, i = 0, l = s.length, out = '';
+    for( ; i < l; i ++ ){
+        chr = s.charCodeAt( i ).toString( 2 );
+        while( chr.length % 8 != 0 ){ chr = '0' + chr; }
+        out += chr;
+    }
+    return out;
+};
+
+var binToUtf8 = function( s ){
+    var i = 0, l = s.length, chr, out = '';
+    for( ; i < l; i += 8 ){
+        chr = parseInt( s.substr( i, 8 ), 2 ).toString( 16 );
+        out += '%' + ( ( chr.length % 2 == 0 ) ? chr : '0' + chr );
+    }
+    return decodeURIComponent( out );
+};
 
 
 // TODO. Handle Raw TCP/UDP Packets
