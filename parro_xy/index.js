@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var port = process.env.PORT || 8080;
-var sleep = require('sleep');
+//var sleep = require('sleep');
 
 
 var arDrone = require('ar-drone');
@@ -57,7 +57,7 @@ app.post('/drone/transmit', function(req, res) {
         var led_color = bitColor(bit)
         console.log('Blinking ' + led_color + ' for ' + bit)
         client.animateLeds(led_color, 1, 1)
-        sleep(1)
+        //sleep(1)
     }
 });
 
@@ -99,7 +99,7 @@ var binToUtf8 = function( s ){
 // Start FTP on Start because I'm Lazy
 var Ftp = new JSFtp({
   host: "10.42.0.166",
-  user: 'user',
+  user: '',
   pass: ''
 });
 
