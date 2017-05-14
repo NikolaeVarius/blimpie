@@ -119,22 +119,22 @@ var binToUtf8 = function( s ){
 // FTP Functions
 
 // Test FTP FUn
-var data = {"config":{}, "cpu":{}, "mem":{}};
-loadFtpData("/data/config.ini", DELIMITER_EQUALS, data.config);
-loadFtpData("/proc/cpuinfo", DELIMITER_COMMA, data.cpu);
-loadFtpData("/proc/meminfo", DELIMITER_COMMA, data.mem);
-function loadFtpData(path, delimiter, target ) {
-    var str = ""; // Will store the contents of the file.
-    ftp.get(path, function(err, socket) {
-        if (err) return;
-            socket.on("data", function(d) { str += d.toString(); })
-            socket.on("close", function(hadErr) {
-            if (hadErr) { console.error("Failed to retrieving the file: " + path); }
-            else { nvp2Json(str, delimiter, target); }
-        });
-        socket.resume();
-    });
-}
+// var data = {"config":{}, "cpu":{}, "mem":{}};
+// loadFtpData("/data/config.ini", DELIMITER_EQUALS, data.config);
+// loadFtpData("/proc/cpuinfo", DELIMITER_COMMA, data.cpu);
+// loadFtpData("/proc/meminfo", DELIMITER_COMMA, data.mem);
+// function loadFtpData(path, delimiter, target ) {
+//     var str = ""; // Will store the contents of the file.
+//     ftp.get(path, function(err, socket) {
+//         if (err) return;
+//             socket.on("data", function(d) { str += d.toString(); })
+//             socket.on("close", function(hadErr) {
+//             if (hadErr) { console.error("Failed to retrieving the file: " + path); }
+//             else { nvp2Json(str, delimiter, target); }
+//         });
+//         socket.resume();
+//     });
+// }
 
 
 app.post('/drone/ftp/upload', function(req, res) {
