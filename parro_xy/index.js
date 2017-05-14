@@ -160,11 +160,50 @@ app.get('/drone/ftp/download/filename', function(req, res) {
   });
 })
 
-// Sterrint Server
+app.publishStatus('/drone/status/publish', function(req,res)) {
+    pubnub.publish(
+        {
+            message: {
+                such: 'object'
+            },
+            channel: 'drone_status',
+            sendByPost: false, // true to send via post
+            storeInHistory: false, //override default storage options
+            meta: {
+                "cool": "meta"
+            }   // publish extra meta with the request
+        },
+        function (status, response) {
+            if (status.error) {
+                // handle error
+                console.log(status)
+            } else {
+                console.log("message Published w/ timetoken", response.timetoken)
+            }
+        }
+    );
+}
+
+app.subscribe('', function(req,res) {
+    pubnub.subscribe({
+        channels: ['drone_statusl'],
+        withPresence: true // also subscribe to presence instances.
+    })
+})
+// Flight "Control"
 app.post('/drone/fly/up', function(req, res) {
     client.up('1')
 });
 
+app.post('/drone/fly/down', function(req, res) {
+    client.down('1')
+});
+
+
+// Set Home Base to fly back to
+app.post('/drone/setHome', functop() {
+
+})
 
 
 //Testing Functions
@@ -174,7 +213,11 @@ app.post('/drone/blinkdemo', function(req, res) {
   console.log('in here');
 });
 
+// Start Dumping NavData
 
+app.post('/drone/demodata', function(req, res) {
+    client.config('general:navdata_demo', 'FALSE');
+}
 
 
 
