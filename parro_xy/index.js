@@ -5,7 +5,7 @@ var port = process.env.PORT || 8080;
 
 var arDrone = require('ar-drone');
 var client  = arDrone.createClient();
-client.createRepl();
+//client.createRepl();
 
 
 // app.get('/api/users', function(req, res) {
@@ -60,7 +60,7 @@ app.post('/drone/transmit', function(req, res) {
 });
 
 // Convert a 'bit' into LED color
- ifunction bitColor(bit) {
+function bitColor(bit) {
     if (bit === '1') {
         return 'blinkGreen'
     } else if (bit === '0') {
