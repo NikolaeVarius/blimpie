@@ -9,9 +9,20 @@ var arDrone = require('ar-drone');
 var client  = arDrone.createClient();
 var JSFtp = require("jsftp");
 
+// Start FTP on Start because I'm Lazy
+var ftp = new JSFtp({
+  host: "192.168.1.1",
+  user: '',
+  pass: '',
+  port: '5551'
+});
+
+
+ftp.on('jsftp_debug', function(eventType, data) {
+  console.log('DEBUG: ', eventType);
+  console.log(JSON.stringify(data, null, 2));
+});
 //client.createRepl();
-
-
 // app.get('/api/users', function(req, res) {
 //   var user_id = req.param('id');
 //   var token = req.param('token');
@@ -97,15 +108,26 @@ var binToUtf8 = function( s ){
 };
 
 // FTP Functions
-// Start FTP on Start because I'm Lazy
-var ftp = new JSFtp({
-  host: "192.168.1.1",
-  user: '',
-  pass: '',
-  port: '5551'
-});
 
 // Test FTP FUn
+var data = {"config":{}, "cpu":{}, "mem":{}};
+loadFtpData("/data/config.ini", DELIMITER_EQUALS, data.config);
+loadFtpData("/proc/cpuinfo", DELIMITER_COMMA, data.cpu);
+loadFtpData("/proc/meminfo", DELIMITER_COMMA, data.mem);
+function loadFtpData(path, delimiter, target ) {
+    var str = ""; // Will store the contents of the file.
+    ftp.get(path, function(err, socket) {
+        if (err) return;
+            socket.on("data", function(d) { str += d.toString(); })
+            socket.on("close", function(hadErr) {
+            if (hadErr) { console.error("Failed to retrieving the file: " + path); }
+            else { nvp2Json(str, delimiter, target); }
+        });
+        socket.resume();
+    });
+}
+
+
 app.post('/drone/ftp/upload', function(req, res) {
     var dirString = path.dirname(fs.realpathSync(__filename));
     console.log('directory to start walking...', dirString);
