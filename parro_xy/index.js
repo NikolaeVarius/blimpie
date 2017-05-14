@@ -99,6 +99,8 @@ var binToUtf8 = function( s ){
 // Start FTP on Start because I'm Lazy
 var Ftp = new JSFtp({
   host: "10.42.0.166",
+  user: 'user',
+  pass: ''
 });
 
 // Test FTP FUn
