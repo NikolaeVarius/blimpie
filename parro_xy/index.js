@@ -163,7 +163,7 @@ app.get('/drone/ftp/download/filename', function(req, res) {
 // Sterrint Server
 app.post('/drone/fly/up', function(req, res) {
     client.up('1')
-}
+});
 
 
 
