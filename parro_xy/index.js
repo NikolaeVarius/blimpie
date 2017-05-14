@@ -18,10 +18,13 @@ client.createRepl();
 
 // Random Fun Shit
 
+// Get Drone Status
+app.get('/drone/status', function(req,res) {
+    client.on('navdata', console.log);
+})
 
 
-
-//
+// Fun Shit
 app.post('/drone/flightdemo', function(req, res) {
     console.log('Testing Flight Demo');
     client.takeoff();
@@ -37,6 +40,7 @@ app.post('/drone/flightdemo', function(req, res) {
 });
 
 
+// Test LED
 app.post('/drone/blinkdemo', function(req, res) {
   client.animateLeds('blinkRed', 5, 2)
   console.log('in here');
@@ -55,7 +59,8 @@ app.post('/drone/transmit', function(req, res) {
     }
 });
 
-function bitColor(bit) {
+// Convert a 'bit' into LED color
+ ifunction bitColor(bit) {
     if (bit === '1') {
         return 'blinkGreen'
     } else if (bit === '0') {
@@ -65,7 +70,7 @@ function bitColor(bit) {
     }
 }
 
-// Binary Controller
+// Convert String to Binary
 var utf8ToBin = function( s ){
     s = unescape( encodeURIComponent( s ) );
     var chr, i = 0, l = s.length, out = '';
@@ -77,6 +82,7 @@ var utf8ToBin = function( s ){
     return out;
 };
 
+// Convert Binary to String
 var binToUtf8 = function( s ){
     var i = 0, l = s.length, chr, out = '';
     for( ; i < l; i += 8 ){
@@ -89,6 +95,7 @@ var binToUtf8 = function( s ){
 
 // TODO. Handle Raw TCP/UDP Packets
 
-app.listen(port);
+// Listen to everything ever considered harmful
+app.listen(port, '0.0.0.0');
 console.log('Server started! At http://localhost:' + port);
 
