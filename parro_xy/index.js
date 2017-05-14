@@ -2,7 +2,8 @@ var express = require('express');
 var app = express();
 var port = process.env.PORT || 8080;
 //var sleep = require('sleep');
-
+var fs = require('fs');
+var path = require('path');
 
 var arDrone = require('ar-drone');
 var client  = arDrone.createClient();
@@ -97,7 +98,7 @@ var binToUtf8 = function( s ){
 
 // FTP Functions
 // Start FTP on Start because I'm Lazy
-var Ftp = new JSFtp({
+var ftp = new JSFtp({
   host: "10.42.0.166",
   user: '',
   pass: ''
@@ -105,6 +106,9 @@ var Ftp = new JSFtp({
 
 // Test FTP FUn
 app.post('/drone/ftp/upload', function(req, res) {
+    var dirString = path.dirname(fs.realpathSync(__filename));
+    console.log('directory to start walking...', dirString);
+
     ftp.put('./uploads/upload_test', '/data/video/txt', function(hadError) {
       if (!hadError) {
         console.log("File transferred successfully!");
