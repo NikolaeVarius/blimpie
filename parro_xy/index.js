@@ -1,10 +1,13 @@
 var express = require('express');
 var app = express();
 var port = process.env.PORT || 8080;
+var sleep = require('sleep');
 
 
 var arDrone = require('ar-drone');
 var client  = arDrone.createClient();
+var JSFtp = require("jsftp");
+
 //client.createRepl();
 
 
@@ -39,13 +42,12 @@ app.post('/drone/flightdemo', function(req, res) {
       });
 });
 
+//Movement
 
-// Test LED
-app.post('/drone/blinkdemo', function(req, res) {
-  client.animateLeds('blinkRed', 5, 2)
-  console.log('in here');
-});
 
+// Transmit Data Functions
+
+// Take Arbitrary String and send as data via binary
 app.post('/drone/transmit', function(req, res) {
     var string  = 'Hello World';
     var raw = utf8ToBin(string);
@@ -55,9 +57,10 @@ app.post('/drone/transmit', function(req, res) {
         var led_color = bitColor(bit)
         console.log('Blinking ' + led_color + ' for ' + bit)
         client.animateLeds(led_color, 1, 1)
-        wait(1)
+        sleep(1)
     }
 });
+
 
 // Convert a 'bit' into LED color
 function bitColor(bit) {
@@ -91,6 +94,44 @@ var binToUtf8 = function( s ){
     }
     return decodeURIComponent( out );
 };
+
+// FTP Functions
+// Start FTP on Start because I'm Lazy
+var Ftp = new JSFtp({
+  host: "10.42.0.166",
+});
+
+// Test FTP FUn
+app.post('/drone/ftp/upload', function(req, res) {
+    ftp.put('./uploads/upload_test', '/data/video/txt', function(hadError) {
+      if (!hadError) {
+        console.log("File transferred successfully!");
+      } else {
+        console.log(hadError)
+      }
+    });
+});
+
+app.get('/drone/ftp/download/filename', function(req, res) {
+  ftp.get('remote/file.txt', 'local/file.txt', function(hadErr) {
+    if (hadErr)
+      console.error('There was an error retrieving the file.');
+    else
+      console.log('File copied successfully!');
+  });
+})
+
+//Testing Functions
+
+// Test LED
+app.post('/drone/blinkdemo', function(req, res) {
+  client.animateLeds('blinkRed', 5, 2)
+  console.log('in here');
+});
+
+
+
+
 
 
 // TODO. Handle Raw TCP/UDP Packets
