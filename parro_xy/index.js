@@ -99,9 +99,10 @@ var binToUtf8 = function( s ){
 // FTP Functions
 // Start FTP on Start because I'm Lazy
 var ftp = new JSFtp({
-  host: "10.42.0.166",
+  host: "192.168.1.1",
   user: '',
-  pass: ''
+  pass: '',
+  port: '5551'
 });
 
 // Test FTP FUn
@@ -119,7 +120,8 @@ app.post('/drone/ftp/upload', function(req, res) {
 });
 
 app.get('/drone/ftp/download/filename', function(req, res) {
-  ftp.get('remote/file.txt', 'local/file.txt', function(hadErr) {
+    var filename = 'test'
+  ftp.get('/data/video' + filename, './downloads/' + filename, function(hadErr) {
     if (hadErr)
       console.error('There was an error retrieving the file.');
     else
