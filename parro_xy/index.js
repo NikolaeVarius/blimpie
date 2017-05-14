@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8100;
 //var sleep = require('sleep');
 var fs = require('fs');
 var path = require('path');
@@ -8,14 +8,23 @@ var path = require('path');
 var arDrone = require('ar-drone');
 var client  = arDrone.createClient();
 var JSFtp = require("jsftp");
+var PubNub = require('pubnub')
 
 // Start FTP on Start because I'm Lazy
 var ftp = new JSFtp({
   host: "192.168.1.1",
-  user: '',
-  pass: '',
+  user: 'root',
   port: '5551'
 });
+
+// Initialize Pub nub
+var pubnub = new PubNub({
+    subscribeKey: "sub-c-b05c954e-3857-11e7-9843-0619f8945a4f",
+    publishKey: "pub-c-449ab48d-546c-4ff5-887e-21ff713cd73d",
+    logVerbosity: true,
+    ssl: true,
+    presenceTimeout: 130
+})
 
 
 ftp.on('jsftp_debug', function(eventType, data) {
@@ -35,7 +44,7 @@ ftp.on('jsftp_debug', function(eventType, data) {
 
 // Get Drone Status
 app.get('/drone/status', function(req,res) {
-    client.on('navdata', console.log);
+    client.on('navdata', res.send());
 })
 
 
@@ -151,8 +160,14 @@ app.get('/drone/ftp/download/filename', function(req, res) {
   });
 })
 
-//Testing Functions
+// Sterrint Server
+app.post('/drone/fly/up', function(req, res) {
+    client.up('1')
+}
 
+
+
+//Testing Functions
 // Test LED
 app.post('/drone/blinkdemo', function(req, res) {
   client.animateLeds('blinkRed', 5, 2)
